@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport"
+content="width=device-width,initial-scale=1.0">
+
+<title>3D Driving Game</title>
+
+<link rel="stylesheet" href="style.css">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+<script src="https://cdn.jsdelivr.net/npm/three@0.165.0/build/three.min.js"></script>
+
+</head>
+
+<body>
+
+<div id="loading">
+
+<h1>DRIVING GAME</h1>
+
+<div class="loader"></div>
+
+<p>Loading Assets...</p>
+
+</div>
+
+<div id="hud">
+
+<div class="top">
+
+<div class="box">
+<span>Speed</span>
+<h2 id="speed">0</h2>
+</div>
+
+<div class="box">
+<span>Fuel</span>
+<h2 id="fuel">100%</h2>
+</div>
+
+<div class="box">
+<span>Coins</span>
+<h2 id="coins">0</h2>
+</div>
+
+</div>
+
+<div class="mission">
+Mission:
+<span id="missionText">
+Drive 500m
+</span>
+</div>
+
+</div>
+
+<div id="menu">
+
+<h1>3D Driving</h1>
+
+<button id="playBtn">
+PLAY
+</button>
+
+<button id="garageBtn">
+GARAGE
+</button>
+
+<button id="settingsBtn">
+SETTINGS
+</button>
+
+</div>
+
+<div id="mobileControls">
+
+<button id="left">◀</button>
+
+<button id="brake">▼</button>
+
+<button id="accelerate">▲</button>
+
+<button id="right">▶</button>
+
+</div>
+
+<div id="gameOver">
+
+<h1>GAME OVER</h1>
+
+<p id="scoreText">
+Score : 0
+</p>
+
+<button id="restart">
+Restart
+</button>
+
+</div>
+
+<canvas id="gameCanvas"></canvas>
+
+<script type="module">
+
+import { Game } from "./js/game.js";
+
+const game = new Game();
+
+window.game = game;
+
+document
+.getElementById("playBtn")
+.onclick = ()=>{
+
+document.getElementById("menu").style.display="none";
+
+game.start();
+
+};
+
+document
+.getElementById("restart")
+.onclick=()=>{
+
+location.reload();
+
+};
+
+</script>
+
+</body>
+</html>
