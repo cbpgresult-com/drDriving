@@ -1,4 +1,4 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -258,7 +258,7 @@ color:#6b7280;
 <div class="result-card">
 
 <div class="top-bar">
-<button class="back-btn" onclick="window.location.href='/'">← Back</button>
+<button class="back-btn" onclick="window.location.href='/drDriving/'">← Back</button>
 <div style="width:80px;"></div>
 </div>
 
@@ -317,7 +317,7 @@ const API_URL =
 
 function parsePath(){
 
-  // pathname example: /24212930021/Shjuhsgjdh.result
+  // pathname example: /drDriving/24212930021/Shjuhsgjdh.result
   let path = window.location.pathname;
 
   // remove leading/trailing slashes
@@ -325,7 +325,12 @@ function parsePath(){
 
   let parts = path.split("/");
 
-  // first segment = roll number
+  // drop the "drDriving" project-pages prefix if present
+  if(parts[0] && parts[0].toLowerCase() === "drdriving"){
+    parts.shift();
+  }
+
+  // remaining first segment = roll number
   let roll = parts[0] || "";
 
   return { roll: roll };
@@ -468,7 +473,7 @@ function renderResult(data, roll){
     // jaise fields ke bina API se dobara result nahi maang sakte.
     showError(
       "⚠ Result data not found for this link.<br>" +
-      "Please search again from the <a href='/' style='color:#2563eb;'>home page</a>."
+      "Please search again from the <a href='/drDriving/' style='color:#2563eb;'>home page</a>."
     );
 
   }
