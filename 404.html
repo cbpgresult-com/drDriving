@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<script>
+const path = location.pathname.replace(/^\//, "");
+
+// Example:
+// 24212930021-AbCdEf.result
+
+if(path.endsWith(".result")){
+    location.replace("/result.html?" + path);
+}else{
+    location.replace("/");
+}
+</script>
+</head>
+<body>
+Redirecting...
+</body>
+</html>
