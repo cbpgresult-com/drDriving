@@ -832,8 +832,15 @@ try{
 sessionStorage.setItem("cbpg_result_" + roll, JSON.stringify(payload));
 }catch(e){}
 
-/* URL format: /ROLLNO/anything.result */
-window.location.href = "/drDriving/" + encodeURIComponent(roll) + "/result-" + Date.now() + ".result";
+/* URL format: /drDriving/ROLLNO/byMSDSU-XXXX.result
+   (drDriving prefix zaroori hai kyunki ye GitHub Pages "project site"
+   hai, root "username.github.io" site nahi. XXXX ek random 4-letter
+   word hai taaki har baar alag dikhe) */
+let randomWord = Array.from({length:4}, function(){
+  return "abcdefghijklmnopqrstuvwxyz"[Math.floor(Math.random()*26)];
+}).join("");
+
+window.location.href = "/drDriving/" + encodeURIComponent(roll) + "/byMSDSU-" + randomWord + ".result";
 
 }else{
 
@@ -1063,4 +1070,3 @@ document.addEventListener("keydown", function(e){
 
 </body>
 </html>
- 
