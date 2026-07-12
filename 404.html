@@ -1,16 +1,484 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<meta charset="utf-8">
-<script>
-const path = location.pathname.substring(1);
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CBPG Result - Student Result</title>
+<meta name="robots" content="noindex,nofollow">
 
-if(path.endsWith(".result")){
-    location.replace("/?result=" + encodeURIComponent(path));
-}else{
-    location.replace("/");
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:'Poppins',sans-serif;
 }
-</script>
+
+body{
+min-height:100vh;
+background:
+linear-gradient(
+135deg,
+#0f172a,
+#1e293b,
+#2563eb,
+#06b6d4
+);
+display:flex;
+flex-direction:column;
+align-items:center;
+padding:15px;
+}
+
+.result-card{
+width:100%;
+max-width:1200px;
+background:#fff;
+border-radius:20px;
+padding:15px;
+display:flex;
+flex-direction:column;
+min-height:90vh;
+box-shadow:0 15px 50px rgba(0,0,0,.3);
+position:relative;
+}
+
+.top-bar{
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:8px;
+}
+
+.back-btn{
+border:none;
+background:#ef4444;
+color:#fff;
+padding:8px 16px;
+border-radius:10px;
+font-size:14px;
+font-weight:600;
+cursor:pointer;
+}
+
+.success{
+width:42px;
+height:42px;
+font-size:22px;
+margin:0 auto 5px;
+border-radius:50%;
+display:flex;
+align-items:center;
+justify-content:center;
+color:#fff;
+background:#22c55e;
+}
+
+.popup-title{
+font-size:14px;
+font-weight:700;
+margin-bottom:4px;
+color:#16a34a;
+text-align:center;
+}
+
+.student-name{
+display:inline-block;
+margin:4px auto 6px;
+padding:6px 12px;
+font-size:13px;
+font-weight:600;
+line-height:1.4;
+color:#fff;
+background:linear-gradient(90deg,#2563eb,#06b6d4,#22c55e);
+background-size:300% 300%;
+border-radius:10px;
+border:2px solid rgba(255,255,255,.8);
+animation:gradientMove 3s linear infinite, blinkBorder 1s infinite alternate;
+box-shadow:0 0 10px rgba(37,99,235,.4);
+max-width:90%;
+word-break:break-word;
+text-align:center;
+}
+
+@keyframes gradientMove{0%{background-position:0% 50%;}100%{background-position:100% 50%;}}
+@keyframes blinkBorder{0%{border-color:#fff;box-shadow:0 0 5px #fff;}100%{border-color:#22c55e;box-shadow:0 0 15px #22c55e;}}
+
+.center-block{
+display:flex;
+flex-direction:column;
+align-items:center;
+}
+
+.roll-display{
+text-align:center;
+font-size:12px;
+color:#6b7280;
+margin-bottom:2px;
+font-weight:500;
+}
+
+.student-semester{
+margin-top:0;
+margin-bottom:5px;
+font-size:13px;
+font-weight:500;
+color:#6b7280;
+text-align:center;
+}
+
+#pdfLoader{
+flex:1;
+display:none;
+justify-content:center;
+align-items:center;
+flex-direction:column;
+background:#fff;
+border-radius:12px;
+}
+
+.pdf-loading{display:flex;gap:10px;}
+.pdf-loading span{
+width:14px;
+height:14px;
+border-radius:50%;
+background:#2563eb;
+animation:dotJump 0.8s infinite ease-in-out;
+}
+.pdf-loading span:nth-child(2){animation-delay:.15s;}
+.pdf-loading span:nth-child(3){animation-delay:.3s;}
+
+@keyframes dotJump{
+0%,80%,100%{transform:translateY(0);opacity:.5;}
+40%{transform:translateY(-12px);opacity:1;}
+}
+
+.pdf-text{
+margin-top:18px;
+font-size:18px;
+font-weight:600;
+color:#2563eb;
+}
+
+#resultFrame{
+width:100%;
+flex:1;
+border:none;
+border-radius:12px;
+background:#fff;
+display:none;
+}
+
+.download-btn{
+margin-top:10px;
+width:100%;
+padding:14px;
+border:none;
+border-radius:12px;
+background:linear-gradient(45deg,#2563eb,#06b6d4);
+color:#fff;
+font-size:15px;
+font-weight:600;
+cursor:pointer;
+display:none;
+}
+
+.error-box{
+margin:auto;
+text-align:center;
+font-size:16px;
+font-weight:600;
+color:#b91c1c;
+}
+
+#downloadLoader{
+display:none;
+position:fixed;
+top:20px;
+left:50%;
+transform:translateX(-50%);
+z-index:999999;
+width:100%;
+pointer-events:none;
+}
+
+.download-card{
+width:450px;
+max-width:95vw;
+background:#fff;
+border-radius:16px;
+padding:14px 16px;
+box-shadow:0 10px 30px rgba(0,0,0,.18);
+pointer-events:auto;
+margin:0 auto;
+}
+
+.download-row{
+display:flex;
+justify-content:space-between;
+align-items:center;
+font-size:14px;
+font-weight:600;
+margin-bottom:10px;
+color:#111827;
+}
+
+.progress-bar{
+width:100%;
+height:8px;
+background:#e5e7eb;
+border-radius:999px;
+overflow:hidden;
+}
+
+#progressFill{
+width:0%;
+height:100%;
+background:linear-gradient(90deg,#2563eb,#06b6d4,#22c55e);
+border-radius:999px;
+transition:width .25s ease;
+}
+
+#downloadText{
+margin-top:8px;
+font-size:12px;
+color:#6b7280;
+}
+
+@media(max-width:768px){
+.result-card{padding:10px;}
+}
+</style>
 </head>
-<body></body>
+
+<body>
+
+<div class="result-card">
+
+<div class="top-bar">
+<button class="back-btn" onclick="window.location.href='/'">← Back</button>
+<div style="width:80px;"></div>
+</div>
+
+<div class="center-block">
+<div class="success">✓</div>
+<div class="popup-title">Result Found</div>
+<div class="student-name" id="studentName"></div>
+<div class="roll-display" id="rollDisplay"></div>
+<div class="student-semester" id="studentSemester"></div>
+</div>
+
+<div id="pdfLoader">
+<div class="pdf-loading"><span></span><span></span><span></span></div>
+<p class="pdf-text">Loading PDF...</p>
+</div>
+
+<iframe id="resultFrame"></iframe>
+
+<div id="errorBox" class="error-box" style="display:none;"></div>
+
+<button id="actionBtn" class="download-btn" onclick="openFullResult()">
+📄 Download Result
+</button>
+
+</div>
+
+<div id="downloadLoader">
+<div class="download-card">
+<div class="download-row">
+<span>📥 Downloading Result PDF</span>
+<span id="downloadPercent">0%</span>
+</div>
+<div class="progress-bar"><div id="progressFill"></div></div>
+<div id="downloadText">Preparing file...</div>
+</div>
+</div>
+
+<script>
+
+/*
+  GITHUB PAGES "FANCY URL" TRICK
+  --------------------------------
+  URL format supported: /ROLLNO/anything.result
+  e.g. https://cbpgresult-com.github.io/24212930021/Shjuhsgjdh.result
+
+  GitHub Pages serves this file (404.html) automatically whenever
+  a URL doesn't match a real file/folder. We read window.location.pathname
+  here, pull the roll number out of it, then fetch that student's data
+  from sessionStorage (saved by index.html right before navigating here)
+  or directly from the API as a fallback. The fancy URL itself is never
+  changed — history.replaceState keeps it exactly as typed/navigated.
+*/
+
+const API_URL =
+"https://script.google.com/macros/s/AKfycbxE2TMnA4lpP_WgPa3_uf7wMXKIxFEkJof0tLUVUuIGUI7oVA6bn6QxQ1mZg3Ys2Oqu/exec";
+
+function parsePath(){
+
+  // pathname example: /24212930021/Shjuhsgjdh.result
+  let path = window.location.pathname;
+
+  // remove leading/trailing slashes
+  path = path.replace(/^\/+|\/+$/g, "");
+
+  let parts = path.split("/");
+
+  // first segment = roll number
+  let roll = parts[0] || "";
+
+  return { roll: roll };
+}
+
+function showError(msg){
+  document.getElementById("errorBox").style.display = "block";
+  document.getElementById("errorBox").innerHTML = msg;
+}
+
+function renderResult(data, roll){
+
+  document.getElementById("studentName").innerHTML =
+    "👨‍🎓 " + (data.student || "Student");
+
+  document.getElementById("rollDisplay").innerHTML =
+    "Roll No : " + roll;
+
+  if(data.examType === "BACKPAPER" || data.examType === "BACK PAPER"){
+    document.getElementById("studentSemester").innerHTML =
+      "Semester : " + data.sem + " (BACK PAPER) " + data.year;
+  }else{
+    document.getElementById("studentSemester").innerHTML =
+      "Semester : " + data.sem + " (" + data.year + ")";
+  }
+
+  let frame = document.getElementById("resultFrame");
+  let loader = document.getElementById("pdfLoader");
+
+  loader.style.display = "flex";
+
+  frame.onload = function(){
+    loader.style.display = "none";
+    frame.style.display = "block";
+  };
+
+  frame.src = data.link;
+
+  document.getElementById("actionBtn").style.display = "block";
+
+  window.openFullResult = async function(){
+
+    if(!data.link) return;
+
+    document.getElementById("downloadLoader").style.display = "flex";
+
+    let percent = 0;
+
+    let timer = setInterval(function(){
+      if(percent < 95){
+        percent += 5;
+        document.getElementById("downloadPercent").innerText = percent + "%";
+        document.getElementById("progressFill").style.width = percent + "%";
+        if(percent > 80){
+          document.getElementById("downloadText").innerText = "Processing PDF...";
+        }
+      }
+    },150);
+
+    try{
+
+      const response = await fetch(API_URL + "?download=" + encodeURIComponent(data.link));
+      const base64 = await response.text();
+
+      clearInterval(timer);
+
+      document.getElementById("downloadPercent").innerText = "100%";
+      document.getElementById("progressFill").style.width = "100%";
+      document.getElementById("downloadText").innerText = "Download Completed ✓";
+
+      let btn = document.getElementById("actionBtn");
+      btn.innerHTML = "✅ Open PDF";
+      btn.style.background = "#22c55e";
+      btn.onclick = function(){ window.open(data.link, "_blank"); };
+
+      const byteCharacters = atob(base64);
+      const byteNumbers = new Array(byteCharacters.length);
+      for(let i=0;i<byteCharacters.length;i++){
+        byteNumbers[i] = byteCharacters.charCodeAt(i);
+      }
+      const blob = new Blob([new Uint8Array(byteNumbers)],{type:"application/pdf"});
+      const url = URL.createObjectURL(blob);
+
+      const a = document.createElement("a");
+      a.href = url;
+
+      if(data.examType === "BACKPAPER"){
+        a.download = roll + "_BackPaper_Sem_" + data.sem + ".pdf";
+      }else{
+        a.download = roll + "_Sem_" + data.sem + ".pdf";
+      }
+
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+
+      setTimeout(function(){
+        document.getElementById("downloadLoader").style.display = "none";
+        document.getElementById("downloadPercent").innerText = "0%";
+        document.getElementById("progressFill").style.width = "0%";
+        document.getElementById("downloadText").innerText = "Preparing file...";
+      },500);
+
+    }catch(e){
+      clearInterval(timer);
+      document.getElementById("downloadLoader").style.display = "none";
+      alert("Download Failed");
+    }
+  };
+}
+
+(function init(){
+
+  let { roll } = parsePath();
+
+  if(!roll){
+    showError("⚠ Invalid result link.");
+    return;
+  }
+
+  // Data pehle se index.html ne sessionStorage me save kiya hoga
+  let saved = null;
+
+  try{
+    saved = JSON.parse(sessionStorage.getItem("cbpg_result_" + roll) || "null");
+  }catch(e){
+    saved = null;
+  }
+
+  if(saved && saved.link){
+
+    renderResult(saved, roll);
+
+  }else{
+
+    // Fallback: agar seedha ye URL kholi gayi ho (bina index.html se aaye),
+    // toh saved data nahi milega. Is case me user ko wapas search karne
+    // ke liye bola jaata hai, kyunki hume father-name/course/exam-type
+    // jaise fields ke bina API se dobara result nahi maang sakte.
+    showError(
+      "⚠ Result data not found for this link.<br>" +
+      "Please search again from the <a href='/' style='color:#2563eb;'>home page</a>."
+    );
+
+  }
+
+})();
+
+document.addEventListener("contextmenu", function(e){ e.preventDefault(); });
+document.addEventListener("keydown", function(e){ if (e.keyCode == 123){ e.preventDefault(); } });
+
+</script>
+
+</body>
 </html>
