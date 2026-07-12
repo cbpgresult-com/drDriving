@@ -1,21 +1,16 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="UTF-8">
+<meta charset="utf-8">
 <script>
-const path = location.pathname.replace(/^\//, "");
-
-// Example:
-// 24212930021-AbCdEf.result
+const path = location.pathname.substring(1);
 
 if(path.endsWith(".result")){
-    location.replace("/result.html?" + path);
+    location.replace("/?result=" + encodeURIComponent(path));
 }else{
     location.replace("/");
 }
 </script>
 </head>
-<body>
-Redirecting...
-</body>
+<body></body>
 </html>
