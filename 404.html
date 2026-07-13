@@ -1,4 +1,4 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -6,137 +6,45 @@
 <title>CBPG Result - Student Result</title>
 <meta name="robots" content="noindex,nofollow">
 
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-
 <style>
 *{
 margin:0;
 padding:0;
 box-sizing:border-box;
-font-family:'Poppins',sans-serif;
+font-family:sans-serif;
+}
+
+html,body{
+height:100%;
 }
 
 body{
-min-height:100vh;
-background:
-linear-gradient(
-135deg,
-#0f172a,
-#1e293b,
-#2563eb,
-#06b6d4
-);
+height:100vh;
+background:#0f172a;
 display:flex;
 flex-direction:column;
-align-items:center;
-padding:15px;
+padding:8px;
+overflow:hidden;
 }
 
-.result-card{
-width:100%;
-max-width:1200px;
-background:#fff;
-border-radius:20px;
-padding:15px;
-display:flex;
-flex-direction:column;
-min-height:90vh;
-box-shadow:0 15px 50px rgba(0,0,0,.3);
+.pdf-wrap{
+flex:1;
+min-height:0;
 position:relative;
-}
-
-.top-bar{
-display:flex;
-justify-content:space-between;
-align-items:center;
-margin-bottom:8px;
-}
-
-.back-btn{
-border:none;
-background:#ef4444;
-color:#fff;
-padding:8px 16px;
 border-radius:10px;
-font-size:14px;
-font-weight:600;
-cursor:pointer;
-}
-
-.success{
-width:42px;
-height:42px;
-font-size:22px;
-margin:0 auto 5px;
-border-radius:50%;
-display:flex;
-align-items:center;
-justify-content:center;
-color:#fff;
-background:#22c55e;
-}
-
-.popup-title{
-font-size:14px;
-font-weight:700;
-margin-bottom:4px;
-color:#16a34a;
-text-align:center;
-}
-
-.student-name{
-display:inline-block;
-margin:4px auto 6px;
-padding:6px 12px;
-font-size:13px;
-font-weight:600;
-line-height:1.4;
-color:#fff;
-background:linear-gradient(90deg,#2563eb,#06b6d4,#22c55e);
-background-size:300% 300%;
-border-radius:10px;
-border:2px solid rgba(255,255,255,.8);
-animation:gradientMove 3s linear infinite, blinkBorder 1s infinite alternate;
-box-shadow:0 0 10px rgba(37,99,235,.4);
-max-width:90%;
-word-break:break-word;
-text-align:center;
-}
-
-@keyframes gradientMove{0%{background-position:0% 50%;}100%{background-position:100% 50%;}}
-@keyframes blinkBorder{0%{border-color:#fff;box-shadow:0 0 5px #fff;}100%{border-color:#22c55e;box-shadow:0 0 15px #22c55e;}}
-
-.center-block{
-display:flex;
-flex-direction:column;
-align-items:center;
-}
-
-.roll-display{
-text-align:center;
-font-size:12px;
-color:#6b7280;
-margin-bottom:2px;
-font-weight:500;
-}
-
-.student-semester{
-margin-top:0;
-margin-bottom:5px;
-font-size:13px;
-font-weight:500;
-color:#6b7280;
-text-align:center;
+overflow:hidden;
+background:#fff;
 }
 
 #pdfLoader{
-flex:1;
-display:none;
+position:absolute;
+top:0;left:0;right:0;bottom:0;
+display:flex;
 justify-content:center;
 align-items:center;
 flex-direction:column;
 background:#fff;
-border-radius:12px;
+z-index:5;
 }
 
 .pdf-loading{display:flex;gap:10px;}
@@ -157,22 +65,21 @@ animation:dotJump 0.8s infinite ease-in-out;
 
 .pdf-text{
 margin-top:18px;
-font-size:18px;
+font-size:16px;
 font-weight:600;
 color:#2563eb;
 }
 
 #resultFrame{
 width:100%;
-flex:1;
+height:100%;
 border:none;
-border-radius:12px;
 background:#fff;
 display:none;
 }
 
 .download-btn{
-margin-top:10px;
+margin-top:8px;
 width:100%;
 padding:14px;
 border:none;
@@ -183,6 +90,7 @@ font-size:15px;
 font-weight:600;
 cursor:pointer;
 display:none;
+flex-shrink:0;
 }
 
 .error-box{
@@ -190,7 +98,8 @@ margin:auto;
 text-align:center;
 font-size:16px;
 font-weight:600;
-color:#b91c1c;
+color:#fecaca;
+padding:20px;
 }
 
 #downloadLoader{
@@ -246,30 +155,12 @@ margin-top:8px;
 font-size:12px;
 color:#6b7280;
 }
-
-@media(max-width:768px){
-.result-card{padding:10px;}
-}
 </style>
 </head>
 
 <body>
 
-<div class="result-card">
-
-<div class="top-bar">
-<button class="back-btn" onclick="window.location.href='/drDriving/'">← Back</button>
-<div style="width:80px;"></div>
-</div>
-
-<div class="center-block">
-<div class="success">✓</div>
-<div class="popup-title">Result Found</div>
-<div class="student-name" id="studentName"></div>
-<div class="roll-display" id="rollDisplay"></div>
-<div class="student-semester" id="studentSemester"></div>
-</div>
-
+<div class="pdf-wrap">
 <div id="pdfLoader">
 <div class="pdf-loading"><span></span><span></span><span></span></div>
 <p class="pdf-text">Loading PDF...</p>
@@ -278,12 +169,11 @@ color:#6b7280;
 <iframe id="resultFrame"></iframe>
 
 <div id="errorBox" class="error-box" style="display:none;"></div>
+</div>
 
 <button id="actionBtn" class="download-btn" onclick="openFullResult()">
 📄 Download Result
 </button>
-
-</div>
 
 <div id="downloadLoader">
 <div class="download-card">
@@ -301,15 +191,14 @@ color:#6b7280;
 /*
   GITHUB PAGES "FANCY URL" TRICK
   --------------------------------
-  URL format supported: /ROLLNO/anything.result
-  e.g. https://cbpgresult-com.github.io/24212930021/Shjuhsgjdh.result
+  URL format supported: /drDriving/ROLLNO/anything.result
+  e.g. https://cbpgresult-com.github.io/drDriving/24212930021/xxxx.result
 
   GitHub Pages serves this file (404.html) automatically whenever
   a URL doesn't match a real file/folder. We read window.location.pathname
   here, pull the roll number out of it, then fetch that student's data
-  from sessionStorage (saved by index.html right before navigating here)
-  or directly from the API as a fallback. The fancy URL itself is never
-  changed — history.replaceState keeps it exactly as typed/navigated.
+  from sessionStorage (saved by index.html right before navigating here).
+  The fancy URL itself is never changed.
 */
 
 const API_URL =
@@ -317,57 +206,52 @@ const API_URL =
 
 function parsePath(){
 
-  // pathname example: /drDriving/24212930021/Shjuhsgjdh.result
   let path = window.location.pathname;
 
-  // remove leading/trailing slashes
   path = path.replace(/^\/+|\/+$/g, "");
 
   let parts = path.split("/");
 
-  // drop the "drDriving" project-pages prefix if present
   if(parts[0] && parts[0].toLowerCase() === "drdriving"){
     parts.shift();
   }
 
-  // remaining first segment = roll number
   let roll = parts[0] || "";
 
   return { roll: roll };
 }
 
 function showError(msg){
-  document.getElementById("errorBox").style.display = "block";
+  document.getElementById("pdfLoader").style.display = "none";
+  document.getElementById("errorBox").style.display = "flex";
+  document.getElementById("errorBox").style.alignItems = "center";
+  document.getElementById("errorBox").style.justifyContent = "center";
+  document.getElementById("errorBox").style.height = "100%";
   document.getElementById("errorBox").innerHTML = msg;
 }
 
 function renderResult(data, roll){
-
-  document.getElementById("studentName").innerHTML =
-    "👨‍🎓 " + (data.student || "Student");
-
-  document.getElementById("rollDisplay").innerHTML =
-    "Roll No : " + roll;
-
-  if(data.examType === "BACKPAPER" || data.examType === "BACK PAPER"){
-    document.getElementById("studentSemester").innerHTML =
-      "Semester : " + data.sem + " (BACK PAPER) " + data.year;
-  }else{
-    document.getElementById("studentSemester").innerHTML =
-      "Semester : " + data.sem + " (" + data.year + ")";
-  }
 
   let frame = document.getElementById("resultFrame");
   let loader = document.getElementById("pdfLoader");
 
   loader.style.display = "flex";
 
+  /* Mobile browsers often refuse to render a PDF inline inside an
+     <iframe> — they show only a download/open prompt instead of the
+     actual pages. Google's PDF viewer embed renders identically on
+     both desktop and mobile, so we route through it instead of
+     loading the PDF link directly. */
+  let viewerUrl =
+    "https://docs.google.com/gview?embedded=true&url=" +
+    encodeURIComponent(data.link);
+
   frame.onload = function(){
     loader.style.display = "none";
     frame.style.display = "block";
   };
 
-  frame.src = data.link;
+  frame.src = viewerUrl;
 
   document.getElementById("actionBtn").style.display = "block";
 
@@ -452,7 +336,6 @@ function renderResult(data, roll){
     return;
   }
 
-  // Data pehle se index.html ne sessionStorage me save kiya hoga
   let saved = null;
 
   try{
@@ -467,13 +350,9 @@ function renderResult(data, roll){
 
   }else{
 
-    // Fallback: agar seedha ye URL kholi gayi ho (bina index.html se aaye),
-    // toh saved data nahi milega. Is case me user ko wapas search karne
-    // ke liye bola jaata hai, kyunki hume father-name/course/exam-type
-    // jaise fields ke bina API se dobara result nahi maang sakte.
     showError(
       "⚠ Result data not found for this link.<br>" +
-      "Please search again from the <a href='/drDriving/' style='color:#2563eb;'>home page</a>."
+      "Please search again from the <a href='/drDriving/' style='color:#93c5fd;'>home page</a>."
     );
 
   }
